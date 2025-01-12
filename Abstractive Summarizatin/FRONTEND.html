@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* Your existing CSS */
+        body, ul {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family:Verdana, Geneva, Tahoma, sans-serif;
+        }
+
+        .navbar {
+            color: #171523;
+            padding-top:30px ;
+            padding-left: 20px;
+            padding-right: 20px;
+            padding-bottom: 10px;
+            display: flex;             
+            align-items: center;        
+            justify-content: space-between; 
+        }
+
+        .nav-menu {
+            display: flex;               
+            list-style-type: none;       
+            gap: 20px;                   
+        }
+
+        .logo {
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+
+        .nav-menu li {
+            display: inline;             
+        }
+
+        .nav-menu li p {
+            font-size: 1rem;
+            margin: 0;
+            padding: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .nav-menu li p:hover {
+            color: blue;
+        }
+
+        .container {
+            width: 800px;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .input-group textarea {
+            height: 100px;
+            width: 48%;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .buttons button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        .buttons button:hover {
+            background-color: #0056b3;
+        }
+        .detail{
+            margin-left: 90px;
+            margin-right: 50px;
+        }
+
+        .github-container {
+            display: flex;
+        }
+
+        .github-link {
+            display: flex;
+            align-items: center;
+            background-color: #f6f8fa;
+            border-radius: 10px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            max-width: 300px;
+            margin-left: 90px;
+            margin-right: 50px;
+            padding: 8px;
+        }
+
+        .name {
+            color: #0366d6;
+            font-weight: bold;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .name:hover {
+            text-decoration: underline;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="logo">summa<b>RISE</b></b></div>
+                <ul class="nav-menu">
+            <li><p>Home</p></li>
+            <li><p>About</p></li>
+            <li><p>Contact</p></li>
+            <li><p>Dark Mode</p></li>
+        </ul>
+    </div>
+    <p>
+        <hr>
+    </p>
+    <p style="padding: 40px 100px;font-size: 150%;"><b>Add Your Text</b></p>
+    <div class="container">
+        <div class="input-group">
+            <textarea placeholder="Input Text" id="textInput"></textarea>
+            <textarea placeholder="Result Text" id="resultText" readonly></textarea>
+        </div>
+        </div>
+        <div class="buttons">
+            <button onclick="summarizeText()">Summarize</button> <!-- Button to trigger API call -->
+            <button onclick="copyText()">Copy</button>
+            <button onclick="downloadTxt()">Download as txt</button>
+            <button onclick="downloadPdf()">Download as PDF</button>
+        </div>
+    </div>
+    <p class="detail"><b>Details</b></p>
+    <p class="detail">Abstractive summarization is an advanced natural language processing technique that generates concise summaries of longer texts. Unlike extractive methods that simply select existing sentences, abstractive summarization creates new phrases and sentences to capture the core meaning. It aims to produce more fluent and human-like summaries by understanding the content and reformulating it in novel ways. This approach can lead to more coherent results but is also more challenging to implement effectively.</p>
+    <p class="detail"><b>Contributors</b></p>
+    <p class="detail">
+        <div class="github-container">
+            <div class="github-link">
+                <a href="https://github.com/Sudhanshu-Marudgan" target="_blank" class="name">Sudhanshu Marudgan</a>
+            </div>
+            <div class="github-link">
+                <a href="https://github.com/auroravicks" target="_blank" class="name">Vikrant Arora</a>
+            </div>
+            <div class="github-link">
+                <a href="https://github.com/Anoushka-Ramankulath" target="_blank" class="name">Anoushka Ramankulath</a>
+            </div>
+        </div>
+    </p>
+
+    <script>
+        async function summarizeText() {
+            // Get the text input value
+            const textInput = document.getElementById("textInput").value;
+            
+            if (!textInput) {
+                alert("Please enter some text to summarize.");
+                return;
+            }
+
+            // The URL of your summarization API endpoint
+            const apiUrl = "http://127.0.0.1:8000/summarize/";
+
+            try {
+                // Make a POST request to your API
+                const response = await fetch(apiUrl, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ text: textInput }),  // Send the input text as JSON
+                });
+
+                // Parse the response
+                const result = await response.json();
+
+                // Check if the response contains the summary
+                if (result.summary) {
+                    document.getElementById("resultText").value = result.summary;  // Display summary in the result textarea
+                } else {
+                    document.getElementById("resultText").value = "Could not generate summary.";
+                }
+            } catch (error) {
+                console.error("Error during summarization:", error);
+                document.getElementById("resultText").value = "Error fetching summary.";
+            }
+        }
+
+        // Copy text function (for Copy button)
+        function copyText() {
+            const resultText = document.getElementById("resultText");
+            resultText.select();
+            document.execCommand("copy");
+            alert("Text copied to clipboard");
+        }
+
+        // Additional features (download as txt, PDF, etc.) can go here
+    </script>
+</body>
+</html>
